@@ -5,6 +5,9 @@
   "repository": "https://github.com/davim5/NodeJS-Challenge.git",
   "author": "davim5 <davim53@hotmail.com>",
   "license": "MIT",
+  "scripts":{
+    "dev":"nodemon index.js"
+  },
   "dependencies": {
     "express": "^4.17.1"
   },
