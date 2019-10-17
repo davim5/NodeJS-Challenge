@@ -8,12 +8,27 @@ server.use(express.json());
 
 const taskList =[{'id':"0",'title':"Nova Task",'tasks':[]}]
 
-//Rota que mostra a lista de projetos
+//Middleware pra ver se tem o projeto e o ID na lista
+function checkIDExists(req,res,next){
+  const { id } = req.params
+  
+  const check = taskList.find(y=> y.id === id)
+
+  if(!check)
+  {
+    return res.status(400).json({erro:'Project not found..'})
+  }
+
+  return next();
+
+}
+
+//Middleware que mostra a lista de projetos
 server.get('/projects',(req,res)=>{
   return res.json(taskList);
 });
 
-//Rota de adicionar projetos
+//Middleware de adicionar projetos
 server.post('/projects',(req,res)=>{
   const { id } = req.body;
 
@@ -25,8 +40,8 @@ server.post('/projects',(req,res)=>{
 
 })
 
-//Rota de alterar o título recebendo o id
-server.put('/projects/:id',(req,res)=>{
+//Middleware de alterar o título recebendo o id
+server.put('/projects/:id',checkIDExists,(req,res)=>{
   const { id } = req.params;
   const { title } = req.body;
 
@@ -36,7 +51,7 @@ server.put('/projects/:id',(req,res)=>{
 })
 
 //Rota pra deletar o projeto pelo id
-server.delete('/projects/:id',(req,res)=>{
+server.delete('/projects/:id',checkIDExists,(req,res)=>{
   
   const { id } = req.params;
 
@@ -46,7 +61,14 @@ server.delete('/projects/:id',(req,res)=>{
 
 })
 
-server.post('/projects/:id/tasks:',(req,res)=>{
+//Adicionar task por id
+server.post('/projects/:id/tasks',checkIDExists,(req,res)=>{
+  const { id } = req.params;
+  const { title } = req.body;
+
+  taskList[id].tasks += [title];
+
+  return res.json(taskList);
 
 });
 
